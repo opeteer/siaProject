@@ -4,6 +4,8 @@ import { Button } from '../ui/Button';
 import { mockStudent } from '../../data/mockData';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
+import { api } from '../../services/api';
+
 interface EditDataModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -14,8 +16,9 @@ export const EditDataModal: React.FC<EditDataModalProps> = ({ isOpen, onClose })
   const [address, setAddress] = useState(mockStudent.biodata.domicileAddress);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    await api.updateBiodata(phone, address);
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
