@@ -26,6 +26,7 @@ export const Sidebar: React.FC = () => {
   ];
 
   const handleLogout = () => {
+    localStorage.removeItem('sia_token');
     navigate('/login');
   };
 

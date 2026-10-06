@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from './components/layout/MainLayout';
+import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { PengumumanPage } from './pages/PengumumanPage';
@@ -17,16 +18,18 @@ export const App: React.FC = () => {
         {/* Standalone Login Screen (01_login) */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* Authenticated Layout with Sidebar & TopBar */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/pengumuman" element={<PengumumanPage />} />
-          <Route path="/jadwal" element={<JadwalPage />} />
-          <Route path="/tagihan" element={<TagihanPage />} />
-          <Route path="/biodata" element={<BiodataPage />} />
-          <Route path="/krs" element={<KrsPage />} />
-          <Route path="/ktm-khs" element={<KtmKhsPage />} />
+        {/* Authenticated Layout with Sidebar, TopBar & Auth Guard */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/pengumuman" element={<PengumumanPage />} />
+            <Route path="/jadwal" element={<JadwalPage />} />
+            <Route path="/tagihan" element={<TagihanPage />} />
+            <Route path="/biodata" element={<BiodataPage />} />
+            <Route path="/krs" element={<KrsPage />} />
+            <Route path="/ktm-khs" element={<KtmKhsPage />} />
+          </Route>
         </Route>
 
         {/* Fallback */}

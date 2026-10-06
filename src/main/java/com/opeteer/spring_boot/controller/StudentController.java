@@ -4,8 +4,10 @@ import com.opeteer.spring_boot.dto.StudentDtos.BiodataDto;
 import com.opeteer.spring_boot.dto.StudentDtos.BiodataUpdateRequest;
 import com.opeteer.spring_boot.dto.StudentDtos.StudentProfileResponse;
 import com.opeteer.spring_boot.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -13,32 +15,48 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/student")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class StudentController {
 
     private final StudentService studentService;
 
+    private String resolveNim(String requestedNim, Authentication auth) {
+        if (auth != null && auth.isAuthenticated() && auth.getName() != null && !"anonymousUser".equals(auth.getName())) {
+            return auth.getName();
+        }
+        return (requestedNim != null && !requestedNim.isBlank()) ? requestedNim : "235314003";
+    }
+
     @GetMapping("/profile")
-    public ResponseEntity<StudentProfileResponse> getProfile(@RequestParam(defaultValue = "235314003") String nim) {
-        return ResponseEntity.ok(studentService.getProfile(nim));
+    public ResponseEntity<StudentProfileResponse> getProfile(
+            @RequestParam(required = false) String nim,
+            Authentication auth
+    ) {
+        return ResponseEntity.ok(studentService.getProfile(resolveNim(nim, auth)));
     }
 
     @GetMapping("/biodata")
-    public ResponseEntity<BiodataDto> getBiodata(@RequestParam(defaultValue = "235314003") String nim) {
-        return ResponseEntity.ok(studentService.getBiodata(nim));
+    public ResponseEntity<BiodataDto> getBiodata(
+            @RequestParam(required = false) String nim,
+            Authentication auth
+    ) {
+        return ResponseEntity.ok(studentService.getBiodata(resolveNim(nim, auth)));
     }
 
     @PutMapping("/biodata")
     public ResponseEntity<BiodataDto> updateBiodata(
-            @RequestParam(defaultValue = "235314003") String nim,
-            @RequestBody BiodataUpdateRequest request
+            @RequestParam(required = false) String nim,
+            @Valid @RequestBody BiodataUpdateRequest request,
+            Authentication auth
     ) {
-        return ResponseEntity.ok(studentService.updateBiodata(nim, request));
+        return ResponseEntity.ok(studentService.updateBiodata(resolveNim(nim, auth), request));
     }
 
     @GetMapping("/ektm")
-    public ResponseEntity<?> getEktmPayload(@RequestParam(defaultValue = "235314003") String nim) {
-        StudentProfileResponse profile = studentService.getProfile(nim);
+    public ResponseEntity<?> getEktmPayload(
+            @RequestParam(required = false) String nim,
+            Authentication auth
+    ) {
+        StudentProfileResponse profile = studentService.getProfile(resolveNim(nim, auth));
         return ResponseEntity.ok(Map.of(
                 "nim", profile.nim(),
                 "name", profile.name(),

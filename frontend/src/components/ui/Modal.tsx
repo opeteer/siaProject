@@ -44,6 +44,9 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
         className={`bg-white rounded-2xl shadow-2xl border border-slate-200 w-full ${widthClasses[maxWidth]} overflow-hidden transform transition-all`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -51,6 +54,7 @@ export const Modal: React.FC<ModalProps> = ({
           <h3 className="font-extrabold text-[#0E2A47] text-lg">{title}</h3>
           <button
             onClick={onClose}
+            aria-label="Tutup dialog"
             className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
           >
             <X size={20} />
