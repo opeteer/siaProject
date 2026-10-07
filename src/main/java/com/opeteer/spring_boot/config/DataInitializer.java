@@ -24,6 +24,7 @@ public class DataInitializer implements CommandLineRunner {
     private final VirtualAccountRepository virtualAccountRepository;
     private final AnnouncementRepository announcementRepository;
     private final AcademicMilestoneRepository milestoneRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -75,6 +76,7 @@ public class DataInitializer implements CommandLineRunner {
                 .currentSemesterSks(14)
                 .maxSksAllowed(24)
                 .krsApproved(true)
+                .passwordHash(passwordEncoder.encode("password123"))
                 .advisor(advisor)
                 .biodata(biodata)
                 .build();

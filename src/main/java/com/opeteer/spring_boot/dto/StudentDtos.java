@@ -46,7 +46,12 @@ public class StudentDtos {
     ) {}
 
     public record BiodataUpdateRequest(
+            @jakarta.validation.constraints.NotBlank(message = "Nomor telepon tidak boleh kosong")
+            @jakarta.validation.constraints.Pattern(regexp = "^[+0-9\\s\\-()]{8,25}$", message = "Format nomor telepon tidak valid")
             String phone,
+
+            @jakarta.validation.constraints.NotBlank(message = "Alamat domisili tidak boleh kosong")
+            @jakarta.validation.constraints.Size(min = 5, max = 255, message = "Alamat domisili harus antara 5 hingga 255 karakter")
             String domicileAddress
     ) {}
 }

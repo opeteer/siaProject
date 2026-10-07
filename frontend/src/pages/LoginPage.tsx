@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { ShieldCheck, Lock, User, ArrowRight, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { mockStudent } from '../data/mockData';
+import { api } from '../services/api';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -10,14 +11,20 @@ export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+    try {
+      await api.login(nim, password);
       navigate('/dashboard');
-    }, 600);
+    } catch (err: any) {
+      setError(err?.message || 'Kombinasi NIM atau Password salah.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,6 +96,13 @@ export const LoginPage: React.FC = () => {
               Single Sign-On (SSO) USD Terintegrasi
             </p>
           </div>
+
+          {error && (
+            <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-2.5 text-xs text-red-700 font-semibold">
+              <AlertCircle size={18} className="text-red-500 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
 
           <form onSubmit={handleLogin} className="space-y-5">
             {/* NIM Field */}

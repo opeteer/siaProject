@@ -26,6 +26,9 @@ public class Student {
     @Column(nullable = false)
     private String name;
 
+    @JsonIgnore
+    private String passwordHash;
+
     private String initials;
 
     private String major;

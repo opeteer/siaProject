@@ -11,13 +11,26 @@ import { StudentProfile, CourseSchedule, KhsGrade, TuitionItem, VirtualAccountIn
 
 const API_BASE = '/api';
 
+function getAuthHeaders(): Record<string, string> {
+  const token = localStorage.getItem('sia_token');
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json'
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 async function fetchJson<T>(url: string, fallback: T | null): Promise<T | null> {
   try {
-    const res = await fetch(`${API_BASE}${url}`);
+    const res = await fetch(`${API_BASE}${url}`, {
+      headers: getAuthHeaders()
+    });
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     return await res.json();
   } catch (err) {
-    // Graceful fallback to mock data when backend is not running
+    // Graceful fallback to mock data when backend is not running or offline
     console.debug(`[API] Fallback used for ${url}:`, err);
     return fallback;
   }
@@ -26,22 +39,29 @@ async function fetchJson<T>(url: string, fallback: T | null): Promise<T | null> 
 export const api = {
   // Auth
   async login(nim: string, password?: string) {
-    try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nim, password, rememberMe: true })
-      });
-      if (!res.ok) throw new Error('Login failed');
-      return await res.json();
-    } catch {
-      return { token: 'mock-sso-token', nim, name: mockStudent.name, status: 'Aktif' };
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nim, password, rememberMe: true })
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(errorData?.message || 'Kombinasi NIM atau Password salah.');
     }
+    const data = await res.json();
+    if (data.token) {
+      localStorage.setItem('sia_token', data.token);
+    }
+    return data;
+  },
+
+  logout() {
+    localStorage.removeItem('sia_token');
   },
 
   // Student Profile & Biodata
-  async getStudentProfile(nim = '235314003'): Promise<StudentProfile> {
-    const data = await fetchJson<any>(`/student/profile?nim=${nim}`, null);
+  async getStudentProfile(_nim = '235314003'): Promise<StudentProfile> {
+    const data = await fetchJson<any>(`/student/profile`, null);
     if (!data) return mockStudent;
 
     return {
@@ -65,11 +85,11 @@ export const api = {
     };
   },
 
-  async updateBiodata(phone: string, domicileAddress: string, nim = '235314003') {
+  async updateBiodata(phone: string, domicileAddress: string, _nim = '235314003') {
     try {
-      const res = await fetch(`${API_BASE}/student/biodata?nim=${nim}`, {
+      const res = await fetch(`${API_BASE}/student/biodata`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ phone, domicileAddress })
       });
       if (!res.ok) throw new Error('Update failed');
@@ -99,8 +119,8 @@ export const api = {
   },
 
   // Study Plan (KRS)
-  async getKrs(nim = '235314003') {
-    const data = await fetchJson<any>(`/academic/krs?nim=${nim}`, null);
+  async getKrs(_nim = '235314003') {
+    const data = await fetchJson<any>(`/academic/krs`, null);
     if (!data) {
       return {
         totalSks: mockStudent.currentSemesterSks,
@@ -114,8 +134,8 @@ export const api = {
   },
 
   // Grade Report (KHS)
-  async getKhs(nim = '235314003'): Promise<{ ips: number; ipk: number; totalSksPassed: number; grades: KhsGrade[] }> {
-    const data = await fetchJson<any>(`/academic/khs?nim=${nim}`, null);
+  async getKhs(_nim = '235314003'): Promise<{ ips: number; ipk: number; totalSksPassed: number; grades: KhsGrade[] }> {
+    const data = await fetchJson<any>(`/academic/khs`, null);
     if (!data || !data.grades) {
       return {
         ips: mockStudent.ips,
@@ -141,8 +161,8 @@ export const api = {
   },
 
   // Tuition & Finances
-  async getTuition(nim = '235314003'): Promise<{ totalBill: number; status: string; items: TuitionItem[] }> {
-    const data = await fetchJson<any>(`/finance/tuition?nim=${nim}`, null);
+  async getTuition(_nim = '235314003'): Promise<{ totalBill: number; status: string; items: TuitionItem[] }> {
+    const data = await fetchJson<any>(`/finance/tuition`, null);
     if (!data || !data.items) {
       const total = mockTuitionItems.reduce((acc, i) => acc + i.amount, 0);
       return { totalBill: total, status: 'LUNAS', items: mockTuitionItems };
@@ -162,8 +182,8 @@ export const api = {
     };
   },
 
-  async getVirtualAccounts(nim = '235314003'): Promise<VirtualAccountInfo[]> {
-    const list = await fetchJson<any[]>(`/finance/virtual-accounts?nim=${nim}`, null);
+  async getVirtualAccounts(_nim = '235314003'): Promise<VirtualAccountInfo[]> {
+    const list = await fetchJson<any[]>(`/finance/virtual-accounts`, null);
     if (!list || list.length === 0) return mockVirtualAccounts;
     return list.map((v) => ({
       bankName: v.bankName,

@@ -34,7 +34,7 @@ public class StudentService {
 
         Biodata bio = student.getBiodata();
         BiodataDto biodataDto = (bio != null) ? new BiodataDto(
-                bio.getNik(),
+                maskNik(bio.getNik()),
                 bio.getBirthPlaceDate(),
                 bio.getGender(),
                 bio.getReligion(),
@@ -72,7 +72,7 @@ public class StudentService {
                 .orElseThrow(() -> new IllegalArgumentException("Biodata untuk NIM " + nim + " tidak ditemukan"));
 
         return new BiodataDto(
-                bio.getNik(),
+                maskNik(bio.getNik()),
                 bio.getBirthPlaceDate(),
                 bio.getGender(),
                 bio.getReligion(),
@@ -99,7 +99,7 @@ public class StudentService {
         Biodata saved = biodataRepository.save(bio);
 
         return new BiodataDto(
-                saved.getNik(),
+                maskNik(saved.getNik()),
                 saved.getBirthPlaceDate(),
                 saved.getGender(),
                 saved.getReligion(),
@@ -109,5 +109,15 @@ public class StudentService {
                 saved.getPhone(),
                 saved.getDomicileAddress()
         );
+    }
+
+    private String maskNik(String nik) {
+        if (nik == null || nik.length() < 10) {
+            return nik;
+        }
+        if (nik.length() == 16) {
+            return nik.substring(0, 6) + "******" + nik.substring(12);
+        }
+        return nik.substring(0, 4) + "******" + nik.substring(nik.length() - 4);
     }
 }

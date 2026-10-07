@@ -15,10 +15,17 @@ export const EditDataModal: React.FC<EditDataModalProps> = ({ isOpen, onClose })
   const [phone, setPhone] = useState(mockStudent.biodata.phone);
   const [address, setAddress] = useState(mockStudent.biodata.domicileAddress);
   const [submitted, setSubmitted] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await api.updateBiodata(phone, address);
+    const phoneRegex = /^[+0-9\s\-()]{8,25}$/;
+    if (!phoneRegex.test(phone.trim())) {
+      setPhoneError('Format nomor telepon tidak valid. Contoh: +62 812-3456-7890');
+      return;
+    }
+    setPhoneError(null);
+    await api.updateBiodata(phone.trim(), address.trim());
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
@@ -54,10 +61,16 @@ export const EditDataModal: React.FC<EditDataModalProps> = ({ isOpen, onClose })
             <input
               type="text"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                if (phoneError) setPhoneError(null);
+              }}
               className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#0E2A47] focus:bg-white"
               required
             />
+            {phoneError && (
+              <p className="text-[11px] text-red-600 font-semibold mt-1">{phoneError}</p>
+            )}
           </div>
 
           <div>
