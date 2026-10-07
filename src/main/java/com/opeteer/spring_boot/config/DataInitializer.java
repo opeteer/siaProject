@@ -18,6 +18,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final StudentRepository studentRepository;
     private final AdvisorRepository advisorRepository;
+    private final LecturerRepository lecturerRepository;
     private final CourseRepository courseRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final TuitionBillRepository tuitionBillRepository;
@@ -36,7 +37,68 @@ public class DataInitializer implements CommandLineRunner {
 
         log.info("Initializing SIA Sanata Dharma (USD) database seed data...");
 
-        // 1. Advisor
+        // 0. Master Lecturers (Dosen FST USD)
+        Lecturer profBambang = lecturerRepository.save(Lecturer.builder()
+                .npp("02198014")
+                .nidn("0524096801")
+                .name("Prof. Ir. Bambang Soelistijanto, Ph.D.")
+                .academicTitle("Guru Besar FST USD")
+                .email("bambang.s@usd.ac.id")
+                .phone("+62 813-2801-9801")
+                .department("S1 Teknik Informatika")
+                .faculty("Fakultas Sains dan Teknologi (FST)")
+                .status("Aktif Mengajar")
+                .build());
+
+        Lecturer buAgnes = lecturerRepository.save(Lecturer.builder()
+                .npp("02199042")
+                .nidn("0515037901")
+                .name("Agnes Maria Polina, S.Kom., M.Sc.")
+                .academicTitle("Dosen Lektor")
+                .email("agnes.polina@usd.ac.id")
+                .phone("+62 812-2719-9042")
+                .department("S1 Teknik Informatika")
+                .faculty("Fakultas Sains dan Teknologi (FST)")
+                .status("Aktif Mengajar")
+                .build());
+
+        Lecturer pakIwan = lecturerRepository.save(Lecturer.builder()
+                .npp("02195018")
+                .nidn("0503087001")
+                .name("Dr. Ir. Iwan Binanto")
+                .academicTitle("Dosen Lektor Kepala")
+                .email("iwan.binanto@usd.ac.id")
+                .phone("+62 811-2519-5018")
+                .department("S1 Teknik Informatika")
+                .faculty("Fakultas Sains dan Teknologi (FST)")
+                .status("Aktif Mengajar")
+                .build());
+
+        Lecturer buPuspa = lecturerRepository.save(Lecturer.builder()
+                .npp("02197025")
+                .nidn("0512117201")
+                .name("Puspaningtyas Sanjoyo Adi, S.T., M.T.")
+                .academicTitle("Dosen Lektor")
+                .email("puspa.adi@usd.ac.id")
+                .phone("+62 815-6819-7025")
+                .department("S1 Teknik Informatika")
+                .faculty("Fakultas Sains dan Teknologi (FST)")
+                .status("Aktif Mengajar")
+                .build());
+
+        Lecturer pakGede = lecturerRepository.save(Lecturer.builder()
+                .npp("02198031")
+                .nidn("0507047501")
+                .name("I Gede Harsemadi, S.Kom., M.T.")
+                .academicTitle("Dosen Asisten Ahli")
+                .email("gede.harsemadi@usd.ac.id")
+                .phone("+62 818-0419-8031")
+                .department("S1 Teknik Informatika")
+                .faculty("Fakultas Sains dan Teknologi (FST)")
+                .status("Aktif Mengajar")
+                .build());
+
+        // 1. Advisor (Pembimbing Akademik Gerardo terhubung ke Master Dosen Prof. Bambang)
         Advisor advisor = advisorRepository.save(Advisor.builder()
                 .name("Prof. Ir. Bambang Soelistijanto, Ph.D.")
                 .npp("02198014")
@@ -44,6 +106,7 @@ public class DataInitializer implements CommandLineRunner {
                 .email("bambang.s@usd.ac.id")
                 .notes("Pertahankan prestasi akademik semester ini. Fokus pada persiapan usulan topik skripsi bidang jaringan cerdas.")
                 .evaluation("Sangat Baik")
+                .lecturer(profBambang)
                 .build());
 
         // 2. Biodata
@@ -83,13 +146,14 @@ public class DataInitializer implements CommandLineRunner {
 
         student = studentRepository.save(student);
 
-        // 4. Courses
+        // 4. Courses (Mata Kuliah terhubung ke Dosen Pengampu masing-masing)
         Course c1 = courseRepository.save(Course.builder()
                 .code("INF-331")
                 .name("Analisis Proses Bisnis")
                 .classGroup("Kelas C")
                 .sks(3)
                 .lecturer("Agnes Maria Polina, S.Kom., M.Sc.")
+                .lecturerEntity(buAgnes)
                 .time("07:00 - 08:40")
                 .room("R.314 St. Robertus")
                 .day("Senin")
@@ -102,6 +166,7 @@ public class DataInitializer implements CommandLineRunner {
                 .classGroup("Kelas A")
                 .sks(3)
                 .lecturer("Dr. Ir. Iwan Binanto")
+                .lecturerEntity(pakIwan)
                 .time("10:30 - 12:10")
                 .room("Lab Komputer 2 Lt.3")
                 .day("Senin")
@@ -114,6 +179,7 @@ public class DataInitializer implements CommandLineRunner {
                 .classGroup("Kelas B")
                 .sks(3)
                 .lecturer("Puspaningtyas Sanjoyo Adi, S.T., M.T.")
+                .lecturerEntity(buPuspa)
                 .time("08:45 - 10:25")
                 .room("Lab Pemrograman Lt.2")
                 .day("Selasa")
@@ -126,6 +192,7 @@ public class DataInitializer implements CommandLineRunner {
                 .classGroup("Kelas A")
                 .sks(3)
                 .lecturer("Prof. Ir. Bambang Soelistijanto, Ph.D.")
+                .lecturerEntity(profBambang)
                 .time("07:00 - 08:40")
                 .room("R.312 St. Robertus")
                 .day("Rabu")
@@ -138,6 +205,7 @@ public class DataInitializer implements CommandLineRunner {
                 .classGroup("Kelas A")
                 .sks(2)
                 .lecturer("Prof. Ir. Bambang Soelistijanto, Ph.D.")
+                .lecturerEntity(profBambang)
                 .time("08:45 - 10:25")
                 .room("R.205 Thomas Aquinas")
                 .day("Kamis")

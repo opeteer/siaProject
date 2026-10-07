@@ -30,4 +30,8 @@ public class Advisor {
     private String notes;
 
     private String evaluation;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "lecturer_id")
+    private Lecturer lecturer;
 }

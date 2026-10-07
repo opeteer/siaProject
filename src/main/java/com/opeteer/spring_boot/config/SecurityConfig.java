@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/academic/jadwal",
+                                "/api/academic/lecturers/**",
                                 "/api/academic/announcements",
                                 "/api/academic/milestones",
                                 "/swagger-ui/**",

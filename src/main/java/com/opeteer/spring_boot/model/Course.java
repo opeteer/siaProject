@@ -29,6 +29,10 @@ public class Course {
 
     private String lecturer;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "lecturer_id")
+    private Lecturer lecturerEntity;
+
     @Column(name = "schedule_time")
     private String time;
 
