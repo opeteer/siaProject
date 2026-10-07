@@ -41,6 +41,10 @@ public class Lecturer {
 
     private String status;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "study_program_id")
+    private StudyProgram studyProgram;
+
     @OneToMany(mappedBy = "lecturer", cascade = CascadeType.ALL)
     @Builder.Default
     @JsonIgnore

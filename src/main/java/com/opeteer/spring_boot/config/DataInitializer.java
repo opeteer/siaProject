@@ -25,6 +25,12 @@ public class DataInitializer implements CommandLineRunner {
     private final VirtualAccountRepository virtualAccountRepository;
     private final AnnouncementRepository announcementRepository;
     private final AcademicMilestoneRepository milestoneRepository;
+    private final FacultyRepository facultyRepository;
+    private final StudyProgramRepository studyProgramRepository;
+    private final CurriculumRepository curriculumRepository;
+    private final BuildingRepository buildingRepository;
+    private final ClassroomRepository classroomRepository;
+    private final AcademicPeriodRepository academicPeriodRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override
@@ -37,7 +43,115 @@ public class DataInitializer implements CommandLineRunner {
 
         log.info("Initializing SIA Sanata Dharma (USD) database seed data...");
 
-        // 0. Master Lecturers (Dosen FST USD)
+        // 0. Master Academic Organization (Fakultas, Prodi, Kurikulum, Gedung, Ruang Kuliah, Periode)
+        Faculty fst = facultyRepository.save(Faculty.builder()
+                .code("FST")
+                .name("Fakultas Sains dan Teknologi")
+                .dean("Dr. Ir. Iwan Binanto")
+                .build());
+
+        StudyProgram prodiTi = studyProgramRepository.save(StudyProgram.builder()
+                .code("INF")
+                .name("Informatika")
+                .degree("S1")
+                .headOfProgram("Puspaningtyas Sanjoyo Adi, S.T., M.T.")
+                .faculty(fst)
+                .build());
+
+        studyProgramRepository.save(StudyProgram.builder()
+                .code("ELE")
+                .name("Teknik Elektro")
+                .degree("S1")
+                .headOfProgram("Dr. Ir. Budi")
+                .faculty(fst)
+                .build());
+
+        studyProgramRepository.save(StudyProgram.builder()
+                .code("MES")
+                .name("Teknik Mesin")
+                .degree("S1")
+                .headOfProgram("Ir. Joko, M.T.")
+                .faculty(fst)
+                .build());
+
+        studyProgramRepository.save(StudyProgram.builder()
+                .code("MAT")
+                .name("Matematika")
+                .degree("S1")
+                .headOfProgram("Dr. Sri Hartati")
+                .faculty(fst)
+                .build());
+
+        curriculumRepository.save(Curriculum.builder()
+                .code("KUR-INF-2023")
+                .name("Kurikulum MBKM Informatika 2023")
+                .startYear(2023)
+                .totalSksGraduation(144)
+                .studyProgram(prodiTi)
+                .build());
+
+        Building bRob = buildingRepository.save(Building.builder()
+                .code("ROB")
+                .name("Gedung St. Robertus Bellarminus")
+                .campusLocation("Kampus III Paingan, Maguwoharjo")
+                .build());
+
+        Building bAqu = buildingRepository.save(Building.builder()
+                .code("AQU")
+                .name("Gedung St. Thomas Aquinas")
+                .campusLocation("Kampus III Paingan, Maguwoharjo")
+                .build());
+
+        Classroom r314 = classroomRepository.save(Classroom.builder()
+                .code("R.314")
+                .name("Ruang Kuliah R.314")
+                .capacity(40)
+                .roomType("Teori")
+                .building(bRob)
+                .build());
+
+        Classroom r312 = classroomRepository.save(Classroom.builder()
+                .code("R.312")
+                .name("Ruang Kuliah R.312")
+                .capacity(40)
+                .roomType("Teori")
+                .building(bRob)
+                .build());
+
+        Classroom labKom2 = classroomRepository.save(Classroom.builder()
+                .code("LAB-KOM-2")
+                .name("Lab Komputer 2 Lt.3")
+                .capacity(35)
+                .roomType("Laboratorium")
+                .building(bRob)
+                .build());
+
+        Classroom labProg = classroomRepository.save(Classroom.builder()
+                .code("LAB-PROG")
+                .name("Lab Pemrograman Lt.2")
+                .capacity(35)
+                .roomType("Laboratorium")
+                .building(bRob)
+                .build());
+
+        Classroom r205 = classroomRepository.save(Classroom.builder()
+                .code("R.205")
+                .name("Ruang Kuliah R.205")
+                .capacity(45)
+                .roomType("Teori")
+                .building(bAqu)
+                .build());
+
+        AcademicPeriod periodGenap2526 = academicPeriodRepository.save(AcademicPeriod.builder()
+                .code("20252")
+                .academicYear("2025/2026")
+                .semesterType("GENAP")
+                .isActive(true)
+                .startDate("2026-02-01")
+                .endDate("2026-07-31")
+                .build());
+
+        // 1. Master Lecturers (Dosen FST USD)
         Lecturer profBambang = lecturerRepository.save(Lecturer.builder()
                 .npp("02198014")
                 .nidn("0524096801")
@@ -48,6 +162,7 @@ public class DataInitializer implements CommandLineRunner {
                 .department("S1 Teknik Informatika")
                 .faculty("Fakultas Sains dan Teknologi (FST)")
                 .status("Aktif Mengajar")
+                .studyProgram(prodiTi)
                 .build());
 
         Lecturer buAgnes = lecturerRepository.save(Lecturer.builder()
@@ -60,6 +175,7 @@ public class DataInitializer implements CommandLineRunner {
                 .department("S1 Teknik Informatika")
                 .faculty("Fakultas Sains dan Teknologi (FST)")
                 .status("Aktif Mengajar")
+                .studyProgram(prodiTi)
                 .build());
 
         Lecturer pakIwan = lecturerRepository.save(Lecturer.builder()
@@ -72,6 +188,7 @@ public class DataInitializer implements CommandLineRunner {
                 .department("S1 Teknik Informatika")
                 .faculty("Fakultas Sains dan Teknologi (FST)")
                 .status("Aktif Mengajar")
+                .studyProgram(prodiTi)
                 .build());
 
         Lecturer buPuspa = lecturerRepository.save(Lecturer.builder()
@@ -84,6 +201,7 @@ public class DataInitializer implements CommandLineRunner {
                 .department("S1 Teknik Informatika")
                 .faculty("Fakultas Sains dan Teknologi (FST)")
                 .status("Aktif Mengajar")
+                .studyProgram(prodiTi)
                 .build());
 
         Lecturer pakGede = lecturerRepository.save(Lecturer.builder()
@@ -96,9 +214,10 @@ public class DataInitializer implements CommandLineRunner {
                 .department("S1 Teknik Informatika")
                 .faculty("Fakultas Sains dan Teknologi (FST)")
                 .status("Aktif Mengajar")
+                .studyProgram(prodiTi)
                 .build());
 
-        // 1. Advisor (Pembimbing Akademik Gerardo terhubung ke Master Dosen Prof. Bambang)
+        // 2. Advisor (Pembimbing Akademik Gerardo terhubung ke Master Dosen Prof. Bambang)
         Advisor advisor = advisorRepository.save(Advisor.builder()
                 .name("Prof. Ir. Bambang Soelistijanto, Ph.D.")
                 .npp("02198014")
@@ -109,7 +228,7 @@ public class DataInitializer implements CommandLineRunner {
                 .lecturer(profBambang)
                 .build());
 
-        // 2. Biodata
+        // 3. Biodata
         Biodata biodata = Biodata.builder()
                 .nik("3471011508020003")
                 .birthPlaceDate("Semarang, 15 Agustus 2004")
@@ -122,7 +241,7 @@ public class DataInitializer implements CommandLineRunner {
                 .domicileAddress("Jl. Paingan No. 42, Maguwoharjo, Depok, Sleman, D.I. Yogyakarta 55282")
                 .build();
 
-        // 3. Student
+        // 4. Student
         Student student = Student.builder()
                 .nim("235314003")
                 .name("Gerardo Ardianta")
@@ -141,12 +260,13 @@ public class DataInitializer implements CommandLineRunner {
                 .krsApproved(true)
                 .passwordHash(passwordEncoder.encode("password123"))
                 .advisor(advisor)
+                .studyProgram(prodiTi)
                 .biodata(biodata)
                 .build();
 
         student = studentRepository.save(student);
 
-        // 4. Courses (Mata Kuliah terhubung ke Dosen Pengampu masing-masing)
+        // 5. Courses (Mata Kuliah terhubung ke Dosen Pengampu, Ruang, Prodi & Periode)
         Course c1 = courseRepository.save(Course.builder()
                 .code("INF-331")
                 .name("Analisis Proses Bisnis")
@@ -154,6 +274,9 @@ public class DataInitializer implements CommandLineRunner {
                 .sks(3)
                 .lecturer("Agnes Maria Polina, S.Kom., M.Sc.")
                 .lecturerEntity(buAgnes)
+                .studyProgram(prodiTi)
+                .classroom(r314)
+                .academicPeriod(periodGenap2526)
                 .time("07:00 - 08:40")
                 .room("R.314 St. Robertus")
                 .day("Senin")
@@ -167,6 +290,9 @@ public class DataInitializer implements CommandLineRunner {
                 .sks(3)
                 .lecturer("Dr. Ir. Iwan Binanto")
                 .lecturerEntity(pakIwan)
+                .studyProgram(prodiTi)
+                .classroom(labKom2)
+                .academicPeriod(periodGenap2526)
                 .time("10:30 - 12:10")
                 .room("Lab Komputer 2 Lt.3")
                 .day("Senin")
@@ -180,6 +306,9 @@ public class DataInitializer implements CommandLineRunner {
                 .sks(3)
                 .lecturer("Puspaningtyas Sanjoyo Adi, S.T., M.T.")
                 .lecturerEntity(buPuspa)
+                .studyProgram(prodiTi)
+                .classroom(labProg)
+                .academicPeriod(periodGenap2526)
                 .time("08:45 - 10:25")
                 .room("Lab Pemrograman Lt.2")
                 .day("Selasa")
@@ -193,6 +322,9 @@ public class DataInitializer implements CommandLineRunner {
                 .sks(3)
                 .lecturer("Prof. Ir. Bambang Soelistijanto, Ph.D.")
                 .lecturerEntity(profBambang)
+                .studyProgram(prodiTi)
+                .classroom(r312)
+                .academicPeriod(periodGenap2526)
                 .time("07:00 - 08:40")
                 .room("R.312 St. Robertus")
                 .day("Rabu")
@@ -206,31 +338,39 @@ public class DataInitializer implements CommandLineRunner {
                 .sks(2)
                 .lecturer("Prof. Ir. Bambang Soelistijanto, Ph.D.")
                 .lecturerEntity(profBambang)
+                .studyProgram(prodiTi)
+                .classroom(r205)
+                .academicPeriod(periodGenap2526)
                 .time("08:45 - 10:25")
                 .room("R.205 Thomas Aquinas")
                 .day("Kamis")
                 .themeColor("amber")
                 .build());
 
-        // 5. Enrollments (KRS & KHS)
+        // 6. Enrollments (KRS & KHS)
         enrollmentRepository.save(Enrollment.builder()
                 .student(student).course(c1).academicYear("2025/2026").semesterType("GENAP")
+                .academicPeriod(periodGenap2526)
                 .isApproved(true).gradeLetter("A").gradePoint(new BigDecimal("12.00")).build());
 
         enrollmentRepository.save(Enrollment.builder()
                 .student(student).course(c2).academicYear("2025/2026").semesterType("GENAP")
+                .academicPeriod(periodGenap2526)
                 .isApproved(true).gradeLetter("A").gradePoint(new BigDecimal("12.00")).build());
 
         enrollmentRepository.save(Enrollment.builder()
                 .student(student).course(c3).academicYear("2025/2026").semesterType("GENAP")
+                .academicPeriod(periodGenap2526)
                 .isApproved(true).gradeLetter("A-").gradePoint(new BigDecimal("11.25")).build());
 
         enrollmentRepository.save(Enrollment.builder()
                 .student(student).course(c4).academicYear("2025/2026").semesterType("GENAP")
+                .academicPeriod(periodGenap2526)
                 .isApproved(true).gradeLetter("A").gradePoint(new BigDecimal("12.00")).build());
 
         enrollmentRepository.save(Enrollment.builder()
                 .student(student).course(c5).academicYear("2025/2026").semesterType("GENAP")
+                .academicPeriod(periodGenap2526)
                 .isApproved(true).gradeLetter("A-").gradePoint(new BigDecimal("7.50")).build());
 
         // 6. Tuition Bills

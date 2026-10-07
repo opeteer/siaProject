@@ -48,6 +48,7 @@ public class SecurityConfig {
                                 "/api/auth/login",
                                 "/api/academic/jadwal",
                                 "/api/academic/lecturers/**",
+                                "/api/academic/organization/**",
                                 "/api/academic/announcements",
                                 "/api/academic/milestones",
                                 "/swagger-ui/**",

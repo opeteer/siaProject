@@ -62,6 +62,10 @@ public class Student {
     @JoinColumn(name = "advisor_id")
     private Advisor advisor;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "study_program_id")
+    private StudyProgram studyProgram;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "biodata_id")
     private Biodata biodata;

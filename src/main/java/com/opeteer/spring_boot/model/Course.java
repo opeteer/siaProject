@@ -38,6 +38,18 @@ public class Course {
 
     private String room;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "study_program_id")
+    private StudyProgram studyProgram;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "classroom_id")
+    private Classroom classroom;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "academic_period_id")
+    private AcademicPeriod academicPeriod;
+
     @Column(name = "schedule_day", nullable = false)
     private String day;
 

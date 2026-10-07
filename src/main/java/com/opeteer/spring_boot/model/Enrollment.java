@@ -31,6 +31,10 @@ public class Enrollment {
 
     private String semesterType;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "academic_period_id")
+    private AcademicPeriod academicPeriod;
+
     @Builder.Default
     private Boolean isApproved = true;
 
