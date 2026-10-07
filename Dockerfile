@@ -55,9 +55,9 @@ COPY --from=backend-builder --chown=appuser:appgroup /app/build/libs/*.jar app.j
 
 USER appuser:appgroup
 
-EXPOSE 8080
+EXPOSE 8020
 
 HEALTHCHECK --interval=20s --timeout=5s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:8080/ || exit 1
+  CMD curl -f http://localhost:8020/ || exit 1
 
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
